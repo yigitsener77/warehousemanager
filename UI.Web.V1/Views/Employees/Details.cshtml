@@ -1,0 +1,82 @@
+﻿@model Core.Concretes.DTOs.EmployeeDTO
+
+@{
+    ViewBag.Title = "Details";
+    var warehouses = ViewBag.Warehouses as IEnumerable<Core.Concretes.DTOs.WarehouseDTO>;
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Employee Details</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.FullName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FullName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Role)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Role)
+        </dd>
+        <dt>Warehouse:</dt>
+        <dd>
+            @Model.Warehouse.Name - @Model.Warehouse.Location
+            <form id="warehouseForm" method="post">
+                <input type="hidden" name="employeeId" value="@Model.Id" />
+                <input type="hidden" id="selectedWarehouseId" name="warehouseId" />
+
+                <div class="dropdown">
+                    (<a id="change_warehouse" class="link-dark dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Transfer another</a>)
+
+                    <ul class="dropdown-menu">
+                        @foreach (var warehouse in warehouses)
+                        {
+                            if (warehouse.Id != Model.Warehouse.Id)
+                            {
+                                <li>
+                                    <button class="dropdown-item warehouse-option" type="button" data-id="@warehouse.Id">@warehouse.Name</button>
+                                </li>
+                            }
+                        }
+                    </ul>
+                </div>
+            </form>
+        </dd>
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Back to List", "Index")
+</p>
+@section Scripts{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const warehouseOptions = document.querySelectorAll(".warehouse-option");
+            const hiddenInput = document.getElementById("selectedWarehouseId");
+            const form = document.getElementById("warehouseForm");
+
+            warehouseOptions.forEach(function (option) {
+                option.addEventListener("click", function () {
+                    const warehouseId = this.getAttribute("data-id");
+                    hiddenInput.value = warehouseId;
+                    form.submit();
+                });
+            });
+        });
+    </script>
+}
